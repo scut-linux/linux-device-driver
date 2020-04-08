@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.15)
+project(helloworld)
+set(CMAKE_C_STANDARD 99)
+include_directories(/home/kaihua/Desktop/build/myimx6/include)
+add_executable(helloworld helloworld.c)
+#add_custom_target(helloworld COMMAND make -C ${helloworld_SOURCE_DIR})

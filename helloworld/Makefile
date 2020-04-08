@@ -24,4 +24,4 @@ modules:
 	$(MAKE) -C $(KERNELDIR) M=$(PWD)  modules
 
 clean:
-	rm -rf  *.o  *.order  *.symvers  *.ko  *.mod.c   *.mod.o
+	rm -rf  *.o  *.order  *.symvers  *.ko  *.mod.c   *.mod.o  .tmp_versions .helloworld*
