@@ -1,3 +1,17 @@
+<<<<<<< HEAD
+KERNELDIR := $(ARM_LINUX_KERNEL_HOME)
+CURRENT_PATH := $(shell pwd)
+
+obj-m := helloworld.o
+
+build: kernel_modules
+
+kernel_modules:
+	$(MAKE) -C $(KERNELDIR) M=$(CURRENT_PATH) modules
+
+clean:
+	$(MAKE) -C $(KERNELDIR) M=$(CURRENT_PATH) clean
+=======
 # To build modules outside of the kernel tree, we run "make"
 # in the kernel source tree; the Makefile these then includes this
 # Makefile once again.
@@ -25,3 +39,4 @@ modules:
 
 clean:
 	rm -rf  *.o  *.order  *.symvers  *.ko  *.mod.c   *.mod.o  .tmp_versions .helloworld*
+>>>>>>> 65d893744f15b6f29a86a1e2fb002b6018099319
