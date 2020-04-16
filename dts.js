@@ -1,8 +1,24 @@
 
 //: ====================================格式说明=================================================================================//
+/{} 
+//树的根,多个相同的标签或/，会自动合并
+
+cpu0: cpu@0 {   
+//label: node-name@unit-address  
+//格式:   标签:节点名称@地址    
+//引入 label 的目的就是为了方便访问节点，可以直接通过&label 来访问这个节点   
+//例如: &cuu0 就代表 cpu@0
+
+status 属性
+//okay”      表明设备是可操作的。
+//“disabled” 表明设备当前是不可操作的，但是在未来可以变为可操作的，比如热插拔设备 插入以后。至于 disabled 的具体含义还要看设备的绑定文档。
+//“fail”     表明设备不可操作，设备检测到了一系列的错误，而且设备也不大可能变得可操作。
+//“fail-sss” 含义和“fail”相同，后面的 sss 部分是检测到的错误内容。
+
+
 //: --------------------常用---------------------------------------//
 compatible = manufacturer,model
-//作用:定义系统的名称
+//作用:定义系统的名称  <厂商,驱动>
 //manufacturer: ”厂商，产品“     如:  acme,coyotes-revenge"
 //model       : 标准类型设备     
 //例如:   compatible = "arm,vexpress-flash", "cfi-flash";  
@@ -37,10 +53,10 @@ reg = <address1 [length1] [address2 [length2]] [address3 [length3]] ... >     //
 //        };    
 // ranges;  空“ranges”属性的存在意味着子地址空间中的地址将1:1映射到父地址空间。
 
-ranges = <address  cpuaddress ....>
+ranges = <child_address  parent_address [length] ....>
 //作用:设备地址转换为cpu地址
-// address  :设备地址，设备地址只在设备域有效，不能被cpu访问
-//cpuaddress:cpu地址
+// child_address  :设备地址，设备地址只在设备域有效，不能被cpu访问
+// parent_address:cpu地址
 //例如:	   ranges = <0 0 0x10100000 0x10000 //Chipselect 1 -> ethernet    //#address-cells = <2>
 //	   	             1 0 0x10160000 0x10000 //Chipselect 2 -> i2c
 //	   	             2 0 0x30000000 0x1000000>;// Chipselect 3 -> flash

@@ -362,8 +362,8 @@
 	pinctrl-0 = <&pinctrl_hog_1>;
 	imx6ul-evk {
 		pinctrl_hog_1: hoggrp-1 {
-			fsl,pins = <
-				MX6UL_PAD_UART1_RTS_B__GPIO1_IO19	0x17059 /* SD1 CD */
+			fsl,pins = <                                                          //                                            <mux_reg conf_reg input_reg mux_mode input_val>           
+				MX6UL_PAD_UART1_RTS_B__GPIO1_IO19	0x17059 /* SD1 CD */              //#define MX6UL_PAD_UART1_RTS_B__GPIO1_IO19     0x0090 0x031C   0x0000    0x5      0x0
 				MX6UL_PAD_GPIO1_IO05__USDHC1_VSELECT	0x17059 /* SD1 VSELECT */
 				MX6UL_PAD_GPIO1_IO00__ANATOP_OTG1_ID    0x13058 /* USB_OTG1_ID */
 			>;
@@ -852,7 +852,7 @@
 &uart2 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_uart2>;
-	fsl,uart-has-rtscts;
+	fsl,uart-has-rtscts;                      //UART2 使用了RTS   CTS 流控线
 	/* for DTE mode, add below change */
 	/* fsl,dte-mode; */
 	/* pinctrl-0 = <&pinctrl_uart2dte>; */

@@ -14,7 +14,7 @@
 #include "imx6ull-pinfunc-snvs.h"
 #include "skeleton.dtsi"
 
-/ {
+/ { //设备树的根
     /*别名*/	
 	aliases {
 		can0 = &flexcan1;   //FlexCAN是一种扩展了CAN总线功能的嵌入式网络架构。由凯特林大学的Juan Pimentel博士设计。它是受到FlexRay和在CAN总线提供更好的确定行为的需求启发。它的重点在于硬件层的冗余和协议层基于时间的优先级通信
@@ -52,7 +52,7 @@
 		#address-cells = <1>;
 		#size-cells = <0>;
 
-		cpu0: cpu@0 {
+		cpu0: cpu@0 {    //label: node-name@unit-address  格式:   标签:节点名称@地址    引入 label 的目的就是为了方便访问节点，可以直接通过&label 来访问这个节点   例如: &cuu0 就代表 cpu@0
 			compatible = "arm,cortex-a7";
 			device_type = "cpu";
 			reg = <0>;
