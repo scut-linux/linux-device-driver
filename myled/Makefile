@@ -1,7 +1,8 @@
 KERNELDIR := $(ARM_LINUX_KERNEL_HOME)
 CURRENT_PATH := $(shell pwd)
 
-obj-m := myled.o
+#obj-m := myled.o
+obj-m :=myled-tree.o
 
 build: kernel_modules
 

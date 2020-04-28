@@ -9,7 +9,37 @@
 #include <asm/mach/map.h>
 #include <asm/uaccess.h>
 #include <asm/io.h>
-/*===============================================================================
+
+#include <linux/of.h>
+#include <linux/of_address.h>
+
+/*================================================================================
+  	添加设备节点
+/ {
+
+	myled{
+		#address-cells=<1>;
+		#size-cells=<1>;
+                compatible = "myled";
+		status = "okay";
+		reg = <
+				0x020C406C 0x04 //CCM_CCGR1_BASE
+				0x020E0068 0x04 //SW_MUX_GPIO1_IO03_BASE
+				0x020E02F4 0x04 //SW_PAD_GPIO1_IO03_BASE
+				0x0209C000 0x04 //GPIO1_DR_BASE
+				0x0209C004 0x04 //GPIO1_GDIR_BASE
+			>;
+	};
+};
+make dtbs
+cp 到tftp 中，开发板启动
+cd /proc/device-tree/myled/
+xxd reg查看寄存器的值
+ * ===============================================================================
+ * */
+
+
+/*================================================================================
  * GPIO1_IO03作为led
  * 时钟 IPG_CLK, 时钟控制　CCGR1
  * Pad 对应的是Soc芯片上的引脚
@@ -31,11 +61,51 @@ static void __iomem *SW_MUX_GPIO1_IO03;
 static void __iomem *SW_PAD_GPIO1_IO03;
 static void __iomem *GPIO1_DR;
 static void __iomem *GPIO1_GDIR;
+static struct device_node *nd;    //设备节点
+
+
 //初始化IO
-static void _mygpio_init(void)
+static int _mygpio_init(void)
 {
     u32 val = 0;
+	struct property*proper;		   //节点属性
+    const char*str;            //status字符串
+    u32 regdata[14];           //寄存器配置
+    /*设备树*/
+	/*1.获取设备节点*/
+	nd = of_find_node_by_path("/myled");
+	if(nd==NULL){
+		printk("/myled node not found!\r\n");
+		return -EINVAL;
+	}else{
+		printk("/myled node found!\r\n");
+	}
 
+	/*2.compatible 属性*/
+	proper = of_find_property(nd,"compatible",NULL);
+	if(proper==NULL){
+		printk("compatible property find failed!\r\n");
+		return -EINVAL;
+	}else{
+		printk("compatible = %s\r\n",(char*)proper->value);
+	}
+	/*3.satus*/
+	if(of_property_read_string(nd,"status",&str)<0){
+		printk("status read failed!\r\n");
+	}else{
+		printk("status = %s\r\n",str);
+	}
+    /*4.reg属性*/
+	if(of_property_read_u32_array(nd, "reg", regdata, 10)<0){
+		printk("reg property read failed!\r\n");
+	}else{
+		u8 i=0;
+		printk("reg data :");
+		for(i=0;i<10;i++){printk("%#x ",regdata[i]);}
+		printk("\r\n");
+	}
+	
+#if 0
     /* 初始化LED */
     /* 1、寄存器地址映射 */
     IMX6U_CCM_CCGR1 = ioremap(CCM_CCGR1_BASE, 4);
@@ -43,7 +113,14 @@ static void _mygpio_init(void)
     SW_PAD_GPIO1_IO03 = ioremap(SW_PAD_GPIO1_IO03_BASE, 4);
     GPIO1_DR = ioremap(GPIO1_DR_BASE, 4);
     GPIO1_GDIR = ioremap(GPIO1_GDIR_BASE, 4);
-
+#else
+    /* 1、寄存器地址映射 */
+    IMX6U_CCM_CCGR1 = of_iomap(nd, 0);
+    SW_MUX_GPIO1_IO03 = of_iomap(nd, 1);
+    SW_PAD_GPIO1_IO03 = of_iomap(nd, 2);
+    GPIO1_DR = of_iomap(nd, 3);
+    GPIO1_GDIR = of_iomap(nd, 4);
+#endif	
     /* 2、使能GPIO1时钟
      * 27–26 CG13  gpio1 clock (gpio1_clk_enable)
      * */
@@ -80,6 +157,8 @@ static void _mygpio_init(void)
     val = readl(GPIO1_DR);
     val |= (1 << 3);
     writel(val, GPIO1_DR);
+
+	return 0;
 }
 
 //io设置值
